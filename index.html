@@ -1,0 +1,171 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8" />
+    <title>Generating some fractal for pixel graphics</title>
+    <script src="phaser.min.js"></script>
+    <script src="lindenmayer.browser.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+    let iaia = new LSystem({
+      axiom: 'A',
+      productions: {'A': '[AraA][l+bB]', 'B':'[BraA]'}
+    })
+    // Iterate the L-System two times and log the result.
+    let result = iaia.iterate(8);
+    console.log(result);
+
+    let width = 6000;
+    let height = 5000;
+
+    var config = {
+        type: Phaser.AUTO,
+        width: width,
+        height: height,
+        backgroundColor: '#fff',
+        scene: {
+            preload: preload,
+            create: create,
+            update: update
+        }
+    };
+
+    let baseScale = 1;
+    let norm = 5;
+
+
+    // vector to create an A copy
+    //let r = { dx: 80 * norm, dy: -100 * norm };
+    let r = { dx: 80*2 * norm, dy: -100*2 * norm };
+
+    // vector to create a B copy    
+    //let l = { dx: -190 * norm , dy: -65 *norm};
+    let l = { dx: -187*2 * norm , dy: -75*2 *norm};
+
+    // scaling for new A coordinate system
+    let a = 0.6;
+
+    // scaling for new B coordinate system
+    let b = 0.4;
+
+    let angle = -180;
+
+    var game = new Phaser.Game(config);
+
+    function preload ()
+    {
+        this.load.image('base', 'base2.png');
+    }
+
+    function create ()
+    {
+        //let base = this.add.image(400, 300, 'base');
+        //base.setScale(baseScale);
+        //base.setRotation(angle);
+        let self = this;
+
+        let coo = { x: width/2, y: height/2, scale: baseScale, angle: 0 };
+        let coos = [coo];
+
+        for(let i=0; i < result.length; ++i)
+        {
+
+            let dx, dy;
+            letter = result[i];
+            switch (letter) {
+                case '[':
+                    // put new coordinate system on the stack
+                    coos.push(copy(coos[coos.length-1]));
+                    break;
+                case ']':
+                    // remove this coordinate system from the stack
+                    coos.pop();
+                    break;
+                case 'a':
+                    // apply rescaling to the current A coordinate system
+                    coos[coos.length-1].scale *= a;
+                    break;
+                case 'b':
+                    // apply rescaling to the current B coordinate system
+                    coos[coos.length-1].scale *= b;
+                    break;
+                case '+':
+                    // rotate the coordinate system as demanded
+                    coos[coos.length-1].angle += angle;
+                    coos[coos.length-1].angle %= 360;
+                    break;
+                case 'l':
+                    // move current coordinate system to according to the B rules
+                    c = coos[coos.length-1];
+
+                    cos = Math.cos(c.angle/180*Math.PI);
+                    sin = Math.sin(c.angle/180*Math.PI);
+                    dx =   l.dx * cos + l.dy * sin;
+                    dy = - l.dx * sin + l.dy * cos;
+                    dx *= c.scale;
+                    dy *= c.scale;
+                    coos[coos.length-1].x += dx;
+                    coos[coos.length-1].y += dy;
+                    console.log(dx,dy);
+                    break;
+                case 'r':
+                    // move current coordinate system according to the A rules
+                    c = coos[coos.length-1];
+
+                    cos = Math.cos(c.angle/180*Math.PI);
+                    sin = Math.sin(c.angle/180*Math.PI);
+                    dx =   r.dx * cos + r.dy * sin;
+                    dy = - r.dx * sin + r.dy * cos;
+                    dx *= c.scale;
+                    dy *= c.scale;
+                    coos[coos.length-1].x += dx;
+                    coos[coos.length-1].y += dy;
+                    console.log(dx,dy);
+                    break;
+                case 'A':
+                    // display the image according to the modified coordinate system
+                    self.add.image(coos[coos.length-1].x,
+                                   coos[coos.length-1].y,
+                                   'base')
+                            .setScale(coos[coos.length-1].scale)
+                            .setAngle(coos[coos.length-1].angle);
+                    break;
+                case 'B':
+                    // display the image according to the modified coordinate system
+                    self.add.image(coos[coos.length-1].x,
+                                   coos[coos.length-1].y,
+                                   'base')
+                            .setScale(coos[coos.length-1].scale)
+                            .setAngle(coos[coos.length-1].angle);
+                    break;
+            }
+        }
+    }
+
+    function update ()
+    {
+    }
+
+    function copy(coo)
+    {
+        let _ = {};
+        _.x = coo.x;
+        _.y = coo.y;
+        _.scale = coo.scale;
+        _.angle = coo.angle;
+        return _;
+    }
+
+
+</script>
+
+</body>
+</html>
