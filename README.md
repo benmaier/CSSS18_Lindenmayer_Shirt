@@ -12,7 +12,7 @@ rules = { A -> [AraA][l+bB],
 ```
 
  * `[` pushes a copy of the current coordinate system to a stack
- * `r` moves the coordinate system to vector _r_
+ * `r` moves the coordinate system by vector _r_
  * `a` scales the coordinate system with ratio _a_
  * `]` removes the current coordinate system from the stack such that the following coordinate system is the one that had this one as an offspring.
  * `l` moves the coordinate system by vector _l_
