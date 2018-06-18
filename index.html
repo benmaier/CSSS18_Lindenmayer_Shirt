@@ -24,7 +24,7 @@
     console.log(result);
 
     let width = 6000;
-    let height = 5000;
+    let height = 4000;
 
     var config = {
         type: Phaser.AUTO,
@@ -44,7 +44,7 @@
 
     // vector to create an A copy
     //let r = { dx: 80 * norm, dy: -100 * norm };
-    let r = { dx: 80*2 * norm, dy: -100*2 * norm };
+    let r = { dx: 70*2 * norm, dy: -97*2 * norm };
 
     // vector to create a B copy    
     //let l = { dx: -190 * norm , dy: -65 *norm};
@@ -72,7 +72,7 @@
         //base.setRotation(angle);
         let self = this;
 
-        let coo = { x: width/2, y: height/2, scale: baseScale, angle: 0 };
+        let coo = { x: width/2, y: height*0.75, scale: baseScale, angle: 0 };
         let coos = [coo];
 
         for(let i=0; i < result.length; ++i)
@@ -114,7 +114,7 @@
                     dy *= c.scale;
                     coos[coos.length-1].x += dx;
                     coos[coos.length-1].y += dy;
-                    console.log(dx,dy);
+                    //console.log(dx,dy);
                     break;
                 case 'r':
                     // move current coordinate system according to the A rules
@@ -128,7 +128,7 @@
                     dy *= c.scale;
                     coos[coos.length-1].x += dx;
                     coos[coos.length-1].y += dy;
-                    console.log(dx,dy);
+                    //console.log(dx,dy);
                     break;
                 case 'A':
                     // display the image according to the modified coordinate system
