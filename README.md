@@ -2,6 +2,13 @@
 
 This repository takes a base png and generates a fractal structure using a Lindenmayer system.
 
+## Result
+
+![logo](logo1_large.png)
+
+
+## Lindenmayer system
+
 The system is as follows
 
 ```
